@@ -21,6 +21,15 @@ const userSchema = new Schema(
       required: true,
       minlength: 6,
     },
+    subscription: {
+      type: String,
+      enum: ['starter', 'pro', 'business'],
+      default: 'starter',
+    },
+    token: {
+      type: String,
+      default: '',
+    },
   },
   {
     versionKey: false,
@@ -31,19 +40,57 @@ const userSchema = new Schema(
 userSchema.post('save', handleMongooseError);
 
 const registerSchema = Joi.object({
-  name: Joi.string(),
-  email: Joi.string().pattern(emailRegExp),
-  password: Joi.string().min(6).required(),
+  name: Joi.string()
+    .pattern(/^[a-zA-Z0-9 ]{3,30}$/)
+    .required()
+    .messages({
+      'any.required': 'Missing required name field',
+      'string.base': 'Name field must be a string',
+      'string.pattern.base': 'Name field may contain only latin letters, numbers and spaces',
+    }),
+  email: Joi.string().pattern(emailRegExp).required().messages({
+    'any.required': 'Missing required email field',
+    'string.base': 'Email field must be a string',
+    'string.pattern.base':
+      'Email field may contain only latin letters, numbers, signs ("_", ".", "-"). Must contain @ and domain.',
+  }),
+  password: Joi.string().min(6).required().messages({
+    'any.required': 'Missing required password field',
+    'string.base': 'Password field must be a string',
+    'string.min': `Password field should have a minimum length of 6`,
+  }),
+  subscription: Joi.string().valid('starter', 'pro', 'business').messages({
+    'any.only': "Subscription field should be only 'starter', 'pro' or 'business'",
+    'string.base': 'Subscription field must be a string',
+  }),
 });
 
 const loginSchema = Joi.object({
-  email: Joi.string().pattern(emailRegExp),
-  password: Joi.string().min(6).required(),
+  email: Joi.string().pattern(emailRegExp).required().messages({
+    'any.required': 'Missing required email field',
+    'string.base': 'Email field must be a string',
+    'string.pattern.base':
+      'Email field may contain only latin letters, numbers, signs ("_", ".", "-"). Must contain @ and domain.',
+  }),
+  password: Joi.string().min(6).required().messages({
+    'any.required': 'Missing required password field',
+    'string.base': 'Password field must be a string',
+    'string.min': `Password field should have a minimum length of 6`,
+  }),
+});
+
+const updateSubscriptionSchema = Joi.object({
+  subscription: Joi.string().required().valid('starter', 'pro', 'business').messages({
+    'any.required': 'missing field subscription',
+    'any.only': "Subscription field should be only 'starter', 'pro' or 'business'",
+    'string.base': 'Subscription field must be a string',
+  }),
 });
 
 const schemas = {
   registerSchema,
   loginSchema,
+  updateSubscriptionSchema,
 };
 
 const User = model('user', userSchema);
