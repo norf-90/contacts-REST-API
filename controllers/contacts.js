@@ -19,9 +19,6 @@ const getById = async (req, res) => {
   const { _id: owner } = req.user;
   const { contactId } = req.params;
 
-  console.log(`owner: ${owner}`);
-  console.log(`contactId: ${contactId}`);
-
   const result = await Contact.findOne({ _id: contactId, owner }, '-createdAt -updatedAt').populate(
     'owner',
     'name'

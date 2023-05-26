@@ -65,7 +65,6 @@ const logout = async (req, res, next) => {
 const updateUserSubscription = async (req, res, next) => {
   const { userId } = req.params;
   const { _id } = req.user;
-  console.log(_id);
 
   const user = await User.findById(userId);
   if (!_id.equals(user._id)) {
