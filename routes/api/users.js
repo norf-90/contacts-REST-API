@@ -1,12 +1,17 @@
 const express = require('express');
 const ctrl = require('../../controllers');
-const { validateBody, authenticate, isValidId } = require('../../middlewares');
+const { validateBody, authenticate, isValidId, upload } = require('../../middlewares');
 const { schemas } = require('../../models/user');
 
 const router = express.Router();
 
 // auth/signup
-router.post('/register', validateBody(schemas.registerSchema), ctrl.register);
+router.post(
+  '/register',
+  // validateBody(schemas.registerSchema),
+  upload.single('avatarURL'),
+  ctrl.register
+);
 
 // login/sigin
 router.post('/login', validateBody(schemas.loginSchema), ctrl.login);
