@@ -8,8 +8,8 @@ const router = express.Router();
 // auth/signup
 router.post(
   '/register',
-  // validateBody(schemas.registerSchema),
-  upload.single('avatarURL'),
+  upload.single('avatar'),
+  validateBody(schemas.registerSchema),
   ctrl.register
 );
 

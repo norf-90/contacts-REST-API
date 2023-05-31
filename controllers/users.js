@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const fs = require('fs/promises');
 const path = require('path');
 const gravatar = require('gravatar');
+const jimp = require('jimp');
 
 const { SECRET_KEY } = process.env;
 const avatarsDir = path.join(__dirname, '..', 'public', 'avatars');
@@ -20,16 +21,21 @@ const register = async (req, res) => {
   }
 
   if (req.file) {
-    const { path: tempAvatarsDir, originalname } = req.file;
-    const resultAvatarsDir = path.join(avatarsDir, originalname);
+    const { path: tempAvatarsDir, filename } = req.file;
+    const resultAvatarsDir = path.join(avatarsDir, filename);
     await fs.rename(tempAvatarsDir, resultAvatarsDir);
-    avatarURL = path.join('avatars', originalname);
+    avatarURL = path.join('avatars', filename);
+
+    const avatarAbsoluteURL = path.join(avatarsDir, filename);
+
+    const avatar = await jimp.read(avatarAbsoluteURL);
+    avatar.resize(250, 250);
+    avatar.writeAsync(avatarAbsoluteURL);
   } else {
     avatarURL = gravatar.url(email);
   }
 
   const hashPassword = await bcrypt.hash(password, 10);
-
   const newUser = await User.create({ ...req.body, password: hashPassword, avatarURL });
 
   res.status(201).json({
@@ -112,6 +118,12 @@ const updateAvatar = async (req, res, next) => {
 
   await fs.rename(tempAvatarsDir, resultAvatarsDir);
   const avatarURL = path.join('avatars', filename);
+
+  const avatarAbsoluteURL = path.join(avatarsDir, filename);
+  const avatar = await jimp.read(avatarAbsoluteURL);
+  avatar.resize(250, 250);
+  avatar.writeAsync(avatarAbsoluteURL);
+
   const updatedUser = await User.findByIdAndUpdate(_id, { avatarURL }, { new: true });
 
   res.json(updatedUser.avatarURL);
