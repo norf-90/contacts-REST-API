@@ -10,7 +10,7 @@
     "start:dev": "cross-env NODE_ENV=development nodemon ./server.js",
     "lint": "eslint **/*.js",
     "lint:fix": "eslint --fix **/*.js",
-    "test": "jest --detectOpenHandles"
+    "test": "jest"
   },
   "dependencies": {
     "bcrypt": "^5.1.0",
