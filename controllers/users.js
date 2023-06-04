@@ -87,7 +87,7 @@ const logout = async (req, res, next) => {
   const { _id } = req.user;
   await User.findByIdAndUpdate(_id, { token: '' });
 
-  res.status(204).json({
+  return res.status(204).json({
     message: 'Logout success',
   });
 };
@@ -113,7 +113,6 @@ const updateUserSubscription = async (req, res, next) => {
 const updateAvatar = async (req, res, next) => {
   const { _id } = req.user;
   const { path: tempAvatarsDir, filename } = req.file;
-  console.log(`filename: ${filename}`);
   const resultAvatarsDir = path.join(avatarsDir, filename);
 
   await fs.rename(tempAvatarsDir, resultAvatarsDir);
