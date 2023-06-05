@@ -1,6 +1,13 @@
 const { getAll, getById, add, deleteById, updateById, updateStatusContact } = require('./contacts');
 
-const { register, login, getCurrent, logout, updateUserSubscription } = require('./users');
+const {
+  register,
+  login,
+  getCurrent,
+  logout,
+  updateUserSubscription,
+  updateAvatar,
+} = require('./users');
 
 module.exports = {
   getAll,
@@ -15,4 +22,5 @@ module.exports = {
   getCurrent,
   logout,
   updateUserSubscription,
+  updateAvatar,
 };
