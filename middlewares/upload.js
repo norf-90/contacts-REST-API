@@ -16,7 +16,8 @@ const multerConfig = multer.diskStorage({
 
 const fileFilter = (req, file, cb) => {
   const extension = fileExtension(file);
-  if (extension !== 'jpeg' || extension !== 'png') {
+
+  if (extension !== 'png' && extension !== 'jpg') {
     cb(HttpError(400, 'File must have only jpeg or png extension'));
   }
   cb(null, true);

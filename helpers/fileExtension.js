@@ -1,5 +1,5 @@
 const fileExtension = file => {
-  const mimetype = file.mimetype.split('/');
+  const mimetype = file.originalname.split('.');
   const extension = mimetype[mimetype.length - 1];
   return extension;
 };
