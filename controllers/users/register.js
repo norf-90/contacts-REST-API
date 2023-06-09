@@ -1,13 +1,9 @@
 const { User } = require('../../models/user');
-const { HttpError, ctrlWrapper, sendEmail } = require('../../helpers');
+const { HttpError, ctrlWrapper, sendEmail, cloudinary, imgResizing } = require('../../helpers');
 const bcrypt = require('bcrypt');
-const fs = require('fs/promises');
-const path = require('path');
 const gravatar = require('gravatar');
-const jimp = require('jimp');
 const { nanoid } = require('nanoid');
 
-const avatarsDir = path.join(__dirname, '..', '..', 'public', 'avatars');
 const { APP_HOST } = process.env;
 
 // registration with default avatar generation
@@ -21,16 +17,13 @@ const register = async (req, res) => {
   }
 
   if (req.file) {
-    const { path: tempAvatarsDir, filename } = req.file;
-    const resultAvatarsDir = path.join(avatarsDir, filename);
-    await fs.rename(tempAvatarsDir, resultAvatarsDir);
-    avatarURL = path.join('avatars', filename);
+    const { path } = req.file;
+    await imgResizing(req.file);
 
-    const avatarAbsoluteURL = path.join(avatarsDir, filename);
-
-    const avatar = await jimp.read(avatarAbsoluteURL);
-    avatar.resize(250, 250);
-    avatar.writeAsync(avatarAbsoluteURL);
+    const fileData = await cloudinary.uploader.upload(path, {
+      folder: 'avatars',
+    });
+    avatarURL = fileData.url;
   } else {
     avatarURL = gravatar.url(email);
   }
