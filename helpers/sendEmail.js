@@ -1,11 +1,3 @@
-// const Mailjet = require('node-mailjet');
-// const { MJ_API_KEY, MJ_SECRET_KEY, MJ_SENDER_EMAIL } = process.env;
-
-// const mailjet = new Mailjet({
-//   apiKey: MJ_API_KEY,
-//   apiSecret: MJ_SECRET_KEY,
-// });
-
 const nodemailer = require('nodemailer');
 const { UKR_NET_EMAIL, UKR_NET_PASSWORD } = process.env;
 
